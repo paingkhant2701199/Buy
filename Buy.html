@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>TRB Date Tool | Premium Edition</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background Shapes */
+        .shape {
+            position: fixed;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+            pointer-events: none;
+            z-index: 0;
+            animation: float 20s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-30px) rotate(5deg); }
+        }
+
+        .shape-1 { width: 300px; height: 300px; top: -100px; left: -100px; animation-duration: 25s; }
+        .shape-2 { width: 200px; height: 200px; bottom: 50px; right: -50px; animation-duration: 20s; animation-delay: 2s; }
+        .shape-3 { width: 150px; height: 150px; top: 40%; right: 10%; animation-duration: 18s; animation-delay: 4s; }
+        .shape-4 { width: 250px; height: 250px; bottom: 20%; left: -80px; animation-duration: 22s; animation-delay: 1s; }
+        .shape-5 { width: 120px; height: 120px; top: 15%; left: 20%; animation-duration: 15s; animation-delay: 3s; }
+
+        .container {
+            max-width: 580px;
+            width: 100%;
+            margin: 0 auto;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Main Glass Card */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(12px);
+            border-radius: 48px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255,255,255,0.1);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .header {
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02));
+            padding: 28px 24px;
+            text-align: center;
+            position: relative;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .header h1 {
+            background: linear-gradient(135deg, #fff, #facc15);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .header p {
+            color: rgba(255,255,255,0.7);
+            font-size: 0.8rem;
+            margin-top: 6px;
+            font-weight: 500;
+        }
+
+        .badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(250, 204, 21, 0.2);
+            border: 1px solid rgba(250, 204, 21, 0.4);
+            border-radius: 40px;
+            padding: 4px 12px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            color: #facc15;
+            backdrop-filter: blur(4px);
+        }
+
+        /* Today Section */
+        .today-section {
+            margin: 20px 20px 0 20px;
+            padding: 14px 20px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            border: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(4px);
+        }
+
+        .today-label {
+            font-weight: 600;
+            color: rgba(255,255,255,0.7);
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .today-date {
+            background: linear-gradient(135deg, #facc15, #f59e0b);
+            color: #1e293b;
+            padding: 6px 18px;
+            border-radius: 40px;
+            font-family: monospace;
+            font-weight: 800;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        /* Input Area */
+        .input-area {
+            padding: 20px;
+        }
+
+        .input-group {
+            margin-bottom: 18px;
+        }
+
+        .input-label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: rgba(255,255,255,0.6);
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .input-field {
+            background: rgba(255,255,255,0.08);
+            border-radius: 60px;
+            display: flex;
+            align-items: center;
+            padding: 4px 20px;
+            border: 1px solid rgba(255,255,255,0.15);
+            transition: all 0.3s ease;
+        }
+
+        .input-field:focus-within {
+            border-color: #facc15;
+            box-shadow: 0 0 0 3px rgba(250, 204, 21, 0.2);
+            background: rgba(255,255,255,0.12);
+        }
+
+        .input-field input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            padding: 14px 8px;
+            font-size: 0.9rem;
+            outline: none;
+            font-family: monospace;
+            font-weight: 500;
+            color: white;
+        }
+
+        .input-field input::placeholder {
+            color: rgba(255,255,255,0.4);
+        }
+
+        /* Buttons Grid */
+        .buttons-grid {
+            display: flex;
+            gap: 14px;
+            margin: 24px 0 20px 0;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            border: none;
+            padding: 14px 18px;
+            border-radius: 60px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            color: white;
+            flex: 1;
+            min-width: 105px;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(4px);
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn span {
+            position: relative;
+            z-index: 1;
+        }
+
+        .btn .btn-day { font-size: 1rem; display: block; }
+        .btn .btn-price { font-size: 0.7rem; opacity: 0.9; display: block; margin-top: 3px; }
+
+        .btn-10 { background: linear-gradient(135deg, #3b82f6, #1d4ed8); box-shadow: 0 8px 20px rgba(59,130,246,0.3); }
+        .btn-20 { background: linear-gradient(135deg, #10b981, #047857); box-shadow: 0 8px 20px rgba(16,185,129,0.3); }
+        .btn-30 { background: linear-gradient(135deg, #f59e0b, #b45309); box-shadow: 0 8px 20px rgba(245,158,11,0.3); }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            filter: brightness(1.05);
+        }
+
+        /* Result Card */
+        .result-card {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(8px);
+            border-radius: 28px;
+            padding: 18px;
+            margin: 10px 0;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.3s;
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .result-label {
+            color: rgba(255,255,255,0.5);
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 600;
+        }
+
+        .result-value {
+            background: rgba(0,0,0,0.5);
+            padding: 16px;
+            border-radius: 20px;
+            font-family: 'Courier New', 'Fira Code', monospace;
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: #facc15;
+            word-break: break-all;
+            border-left: 3px solid #facc15;
+            line-height: 1.5;
+            transition: all 0.2s;
+        }
+
+        .empty-result {
+            color: rgba(255,255,255,0.4);
+            font-weight: normal;
+            font-style: italic;
+        }
+
+        /* Image Upload */
+        .upload-area {
+            margin-top: 18px;
+            padding: 16px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 24px;
+            text-align: center;
+            border: 1px dashed rgba(255,255,255,0.2);
+            transition: all 0.3s;
+        }
+
+        .upload-area:hover {
+            border-color: #facc15;
+            background: rgba(255,255,255,0.08);
+        }
+
+        .upload-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: rgba(255,255,255,0.6);
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .image-preview {
+            margin-top: 12px;
+            max-width: 100%;
+            max-height: 140px;
+            border-radius: 16px;
+            display: none;
+            object-fit: cover;
+            border: 2px solid rgba(250,204,21,0.5);
+        }
+
+        input[type="file"] {
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.7);
+            background: transparent;
+            border: none;
+        }
+
+        /* Send Button */
+        .send-btn {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            border: none;
+            padding: 16px 24px;
+            border-radius: 60px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: white;
+            width: 100%;
+            margin-top: 20px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(34,197,94,0.3);
+        }
+
+        .send-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .send-btn:hover::before {
+            width: 400px;
+            height: 400px;
+        }
+
+        .send-btn span { position: relative; z-index: 1; }
+        .send-btn:hover { transform: translateY(-2px); filter: brightness(1.05); }
+
+        /* Clear Button */
+        .clear-action {
+            text-align: right;
+            margin: 8px 20px 0;
+        }
+        .clear-link {
+            background: rgba(255,255,255,0.1);
+            border: none;
+            padding: 6px 16px;
+            border-radius: 40px;
+            color: rgba(255,255,255,0.6);
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .clear-link:hover {
+            background: rgba(239,68,68,0.3);
+            color: #f87171;
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 0.6rem;
+            color: rgba(255,255,255,0.4);
+            padding: 20px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            margin-top: 10px;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1e293b;
+            color: #facc15;
+            padding: 10px 24px;
+            border-radius: 60px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+            z-index: 1000;
+            backdrop-filter: blur(8px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+
+        .loading {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid white;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 0.6s linear infinite;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 500px) {
+            .container { max-width: 100%; }
+            .btn { padding: 12px 12px; min-width: 85px; }
+            .result-value { font-size: 0.75rem; }
+            .header h1 { font-size: 1.4rem; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Animated Background Shapes -->
+<div class="shape shape-1"></div>
+<div class="shape shape-2"></div>
+<div class="shape shape-3"></div>
+<div class="shape shape-4"></div>
+<div class="shape shape-5"></div>
+
+<div class="container">
+    <div class="glass-card">
+        <div class="header">
+            <h1>✨ TRB Date Tool</h1>
+            <p>+10 day · +20 day · +30 day</p>
+            <div class="badge">PREMIUM</div>
+        </div>
+
+        <div class="today-section">
+            <span class="today-label">📅 TODAY</span>
+            <span class="today-date" id="todayDate">-</span>
+        </div>
+
+        <div class="clear-action">
+            <button class="clear-link" id="clearBtn">🗑 CLEAR ALL</button>
+        </div>
+
+        <div class="input-area">
+            <div class="input-group">
+                <div class="input-label">
+                    <span>🔖</span> TRB CODE
+                </div>
+                <div class="input-field">
+                    <input type="text" id="trbCode" placeholder="TRB-XXXXXXXXXX">
+                </div>
+            </div>
+
+            <div class="input-group">
+                <div class="input-label">
+                    <span>👤</span> NAME
+                </div>
+                <div class="input-field">
+                    <input type="text" id="leoName" placeholder="အမည်ထည့်ပါ">
+                </div>
+            </div>
+
+            <div class="buttons-grid">
+                <button class="btn btn-10" id="btn10">
+                    <span class="btn-day">📆 +10 day</span>
+                    <span class="btn-price">8,000 ks</span>
+                </button>
+                <button class="btn btn-20" id="btn20">
+                    <span class="btn-day">📆 +20 day</span>
+                    <span class="btn-price">15,000 ks</span>
+                </button>
+                <button class="btn btn-30" id="btn30">
+                    <span class="btn-day">📆 +30 day</span>
+                    <span class="btn-price">21,000 ks</span>
+                </button>
+            </div>
+
+            <div class="result-card">
+                <div class="result-header">
+                    <span class="result-label">📋 RESULT (TRB | NAME | DATE)</span>
+                </div>
+                <div class="result-value" id="resultText">
+                    <span class="empty-result">— ရလဒ် ထွက်လာမည့်နေရာ —</span>
+                </div>
+            </div>
+
+            <div class="upload-area">
+                <div class="upload-label">📸 ငွေလွှဲပုံ / အထောက်အထား</div>
+                <input type="file" id="imageInput" accept="image/*">
+                <img id="imagePreview" class="image-preview" alt="Preview">
+            </div>
+
+            <button class="send-btn" id="sendBtn">
+                <span>📨 Telegram သို့ ပို့မည်</span>
+            </button>
+        </div>
+
+        <div class="footer">
+            ⚡ System based on current date | Secure & Fast
+        </div>
+    </div>
+</div>
+
+<div id="toastMsg" class="toast">✅ Copied!</div>
+
+<script>
+    (function() {
+        const BOT_TOKEN = "8452565254:AAHw4MHDz72uF3B2R1Wu_Pv19J63Qi5_PVs";
+        const CHAT_ID = "5831195760";
+
+        const trbInput = document.getElementById('trbCode');
+        const leoInput = document.getElementById('leoName');
+        const resultDiv = document.getElementById('resultText');
+        const todaySpan = document.getElementById('todayDate');
+        const clearBtn = document.getElementById('clearBtn');
+        const sendBtn = document.getElementById('sendBtn');
+        const imageInput = document.getElementById('imageInput');
+        const imagePreview = document.getElementById('imagePreview');
+        const toast = document.getElementById('toastMsg');
+
+        let currentResult = null;
+        let currentPrice = null;
+        let currentDateObj = null;
+        let currentTrb = "";
+        let currentLeo = "";
+        let selectedImageFile = null;
+
+        const PRICE_MAP = { 10: 8000, 20: 15000, 30: 21000 };
+
+        function formatDate(date) {
+            if (!date || isNaN(date)) return 'Invalid';
+            return `${date.getDate()}-${date.getMonth()+1}-${date.getFullYear()}`;
+        }
+
+        function formatPrice(price) {
+            return price.toLocaleString('en-US') + ' ks';
+        }
+
+        function getToday() {
+            const now = new Date();
+            return new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        }
+
+        function updateTodayDisplay() {
+            todaySpan.textContent = formatDate(getToday());
+        }
+
+        function addDays(date, days) {
+            const newDate = new Date(date);
+            newDate.setDate(date.getDate() + days);
+            return newDate;
+        }
+
+        function buildOutput(trb, leo, dateObj) {
+            return `${trb} | ${leo} | ${formatDate(dateObj)}`;
+        }
+
+        function showEmptyResult() {
+            resultDiv.innerHTML = '<span class="empty-result">— ရလဒ် ထွက်လာမည့်နေရာ —</span>';
+            currentResult = null;
+        }
+
+        function showToastMsg(msg) {
+            toast.textContent = msg;
+            toast.style.opacity = "1";
+            setTimeout(() => toast.style.opacity = "0", 2000);
+        }
+
+        function computeAndDisplay(days) {
+            const trb = trbInput.value.trim();
+            const leo = leoInput.value.trim();
+            
+            if (trb === "" || leo === "") {
+                showEmptyResult();
+                showToastMsg("TRB နှင့် NAME ဖြည့်ပါ");
+                return;
+            }
+            
+            const price = PRICE_MAP[days];
+            if (!price) return;
+            
+            const today = getToday();
+            const newDate = addDays(today, days);
+            const result = buildOutput(trb, leo, newDate);
+            
+            resultDiv.innerHTML = result;
+            currentResult = result;
+            currentPrice = price;
+            currentDateObj = newDate;
+            currentTrb = trb;
+            currentLeo = leo;
+        }
+
+        function clearAll() {
+            trbInput.value = '';
+            leoInput.value = '';
+            imageInput.value = '';
+            imagePreview.style.display = 'none';
+            imagePreview.src = '';
+            selectedImageFile = null;
+            showEmptyResult();
+            currentResult = null;
+            currentPrice = null;
+            currentDateObj = null;
+            showToastMsg("✨ အားလုံးရှင်းလင်းပြီး");
+        }
+
+        imageInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                selectedImageFile = file;
+                const reader = new FileReader();
+                reader.onload = function(ev) {
+                    imagePreview.src = ev.target.result;
+                    imagePreview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            } else {
+                selectedImageFile = null;
+                imagePreview.style.display = 'none';
+            }
+        });
+
+        async function sendToTelegram() {
+            if (!BOT_TOKEN || !CHAT_ID) {
+                showToastMsg("❌ Bot token သို့ Chat ID မှားနေပါသည်");
+                return false;
+            }
+            
+            if (!currentResult) {
+                showToastMsg("❌ ရလဒ်မရှိသေးပါ။ ဦးစွာ +10/+20/+30 နှိပ်ပါ");
+                return false;
+            }
+
+            const purchaseDate = formatDate(getToday());
+            const message = `✅ <b>TRB ORDER CONFIRMATION</b>\n━━━━━━━━━━━━━━━━━━\n📌 <b>RESULT:</b>\n<code>${currentResult}</code>\n━━━━━━━━━━━━━━━━━━\n👤 Name: ${currentLeo}\n🔖 TRB Code: ${currentTrb}\n📅 ဝယ်ယူသည့်ရက်: ${purchaseDate}\n📆 သတ်မှတ်ရက်: ${formatDate(currentDateObj)}\n💰 ကျသင့်ငွေ: ${formatPrice(currentPrice)}\n━━━━━━━━━━━━━━━━━━\n📸 ငွေလွှဲပုံ: ${selectedImageFile ? 'ပါရှိသည် ✅' : 'မပါရှိပါ ⚠️'}\n\n🕒 ကျေးဇူးတင်ပါသည်။`;
+
+            try {
+                const originalText = sendBtn.innerHTML;
+                sendBtn.innerHTML = '<span class="loading"></span> ပို့နေသည်...';
+                sendBtn.disabled = true;
+
+                const textUrl = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+                const textRes = await fetch(textUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ chat_id: CHAT_ID, text: message, parse_mode: 'HTML' })
+                });
+                
+                if (!textRes.ok) throw new Error('Text send failed');
+
+                if (selectedImageFile) {
+                    const formData = new FormData();
+                    formData.append('chat_id', CHAT_ID);
+                    formData.append('photo', selectedImageFile);
+                    const photoUrl = `https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`;
+                    const photoRes = await fetch(photoUrl, { method: 'POST', body: formData });
+                    if (!photoRes.ok) throw new Error('Photo send failed');
+                }
+
+                sendBtn.innerHTML = originalText;
+                sendBtn.disabled = false;
+                return true;
+            } catch (err) {
+                console.error(err);
+                sendBtn.innerHTML = '📨 Telegram သို့ ပို့မည်';
+                sendBtn.disabled = false;
+                return false;
+            }
+        }
+
+        sendBtn.addEventListener('click', async () => {
+            const success = await sendToTelegram();
+            if (success) {
+                showToastMsg("✅ Telegram သို့ အောင်မြင်စွာ ပို့ပြီးပါပြီ။");
+            } else {
+                showToastMsg("❌ ပို့ရာတွင် အမှားရှိသည်။ (CORS ဆိုရင် backend လိုအပ်ပါသည်)");
+            }
+        });
+
+        document.getElementById('btn10').addEventListener('click', () => computeAndDisplay(10));
+        document.getElementById('btn20').addEventListener('click', () => computeAndDisplay(20));
+        document.getElementById('btn30').addEventListener('click', () => computeAndDisplay(30));
+        clearBtn.addEventListener('click', clearAll);
+        
+        updateTodayDisplay();
+        showEmptyResult();
+    })();
+</script>
+</body>
+</html>
