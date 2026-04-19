@@ -1,2 +1,0 @@
-# Buy
-For starlink bypass 
